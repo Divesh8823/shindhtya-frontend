@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact Us - Shindhtya Enterprises</title>
+  <link rel="stylesheet" href="style.css" />
+  <script>
+  function validateForm() {
+    var name = document.getElementById('name').value;
+    var email = document.getElementById('email').value;
+    var contact = document.getElementById('contact').value;
+    var message = document.getElementById('message').value;
+
+    if (name === "" || email === "" || contact === "" || message === "") {
+      showMessage("Please fill all the fields", "error");
+      return false;
+    }
+
+    var phonePattern = /^[0-9]{10}$/;
+    if (!phonePattern.test(contact)) {
+      showMessage("Please enter a valid contact number.", "error");
+      return false;
+    }
+
+    submitForm(name, email, contact, message);
+    return false;
+  }
+
+  function showMessage(text, type) {
+    const messageDiv = document.getElementById("formMessage");
+    messageDiv.style.display = "block";
+    messageDiv.className = type;
+    messageDiv.innerText = text;
+  }
+
+  function submitForm(name, email, contact, message) {
+    const formData = {
+      name: name,
+      email: email,
+      contactNumber: contact,
+      message: message
+    };
+
+    fetch('http://localhost:8082/api/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
+    .then(response => {
+      const submitButton = document.getElementById('submitButton');
+
+      if (response.ok) {
+        showMessage("✅ Thank you! We have received your message.", "success");
+        document.getElementById('contactForm').reset();
+
+        // 🟢 Button green and success text
+        submitButton.classList.add('success');
+        submitButton.textContent = "Submitted ✅";
+
+        // ⏱ Reset after 5 seconds
+        setTimeout(() => {
+          submitButton.classList.remove('success');
+          submitButton.textContent = "Send Message";
+          document.getElementById('formMessage').style.display = 'none';
+        }, 5000);
+      } else {
+        showMessage("⚠️ Submission failed. Please try again.", "error");
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      showMessage("❌ Error occurred. Please try again later.", "error");
+    });
+  }
+</script>
+
+</head>
+<body>
+  <header>
+    <h1>Welcome to Shindhtya Enterprises</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="services.html">Services</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section>
+      <h2>Contact Information</h2>
+      <p>Feel free to reach out to us using the contact form below or visit our office at the following address:</p>
+      <p><strong>Office Address:</strong> Bhataura (Dhaurahi Mafi), Post-Rauli Kalyanpur, Chitrakoot, Uttar Pradesh, 210202</p>
+      <p><strong>Phone:</strong> 8770562412</p>
+      <p><strong>Email:</strong> <a href="mailto:info@shindhtya.in">info@shindhtya.in</a></p>
+    </section>
+
+    <section>
+      <h3>Find Us on Google Maps</h3>
+      <iframe 
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3495.080902763174!2d80.98893087395143!3d25.02228007896544!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399c4d5a26eebdcd%3A0xe95c4e8798f65987!2sBhataura%2C%20Chitrakoot%2C%20Uttar%20Pradesh%20210202%2C%20India!5e0!3m2!1sen!2sus!4v1679711534564!5m2!1sen!2sus" 
+        width="600" 
+        height="450" 
+        allowfullscreen="" 
+        loading="lazy">
+      </iframe>
+    </section>
+
+    <section>
+      <h3>Contact Form</h3>
+      <form id="contactForm" onsubmit="return validateForm()">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" required />
+
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required />
+
+        <label for="contact">Contact Number</label>
+        <input type="text" id="contact" name="contact" required />
+
+        <label for="message">Message</label>
+        <textarea id="message" name="message" required></textarea>
+
+        <button type="submit" id="submitButton">Send Message</button>
+      </form>
+
+      <!-- Confirmation or error message shown here -->
+      <div id="formMessage"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Shindhtya Enterprises Pvt. Ltd. All rights reserved.</p>
+  </footer>
+</body>
+</html>
